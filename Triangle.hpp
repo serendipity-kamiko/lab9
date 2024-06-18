@@ -210,9 +210,9 @@ inline Bounds3 Triangle::getBounds() { return Union(Bounds3(v0, v1), v2); }
 
 inline Intersection Triangle::getIntersection(Ray ray)
 {
-    Intersection inter;
+    Intersection inter;//交点信息结构体
 
-    if (dotProduct(ray.direction, normal) > 0)
+    if (dotProduct(ray.direction, normal) > 0)//两者点积大于0，光线与三角形法向量方向一致，不会有交点
         return inter;
     double u, v, t_tmp = 0;
     Vector3f pvec = crossProduct(ray.direction, e2);
@@ -229,12 +229,17 @@ inline Intersection Triangle::getIntersection(Ray ray)
     v = dotProduct(ray.direction, qvec) * det_inv;
     if (v < 0 || u + v > 1)
         return inter;
-    t_tmp = dotProduct(e2, qvec) * det_inv;
+    t_tmp = dotProduct(e2, qvec) * det_inv;//交点到沿光线到摄像机的距离
 
     // TODO find ray triangle intersection
-
-
-
+  
+    //有交点，更新inter属性  
+    inter.happened=true;
+    inter.coords=ray(t_tmp);//计算对应的交点坐标(Ray重载()操作符)
+    inter.normal=normal;//法向量  
+    inter.distance=t_tmp;//距离
+    inter.obj=this;//交点所在的三角形  
+    inter.m=m;//材质
 
     return inter;
 }
